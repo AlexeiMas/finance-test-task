@@ -10,19 +10,21 @@ import { reservedListKey } from '@/constants';
 
 interface ITickerActionBlockProps {
   quote: IQuote;
+  isInListIndicator?: boolean;
+  listKey?: string;
 }
 
-const TickerActionBlock = ({ quote }: ITickerActionBlockProps) => {
+const TickerActionBlock = ({ quote, isInListIndicator, listKey }: ITickerActionBlockProps) => {
   const { lists } = useAppSelector((state) => state.lists);
   const dispatch = useDispatch();
 
   const isInList = useMemo(() => {
-    return Object.values(lists).flat().includes(quote.ticker);
-  }, [lists]);
+    return isInListIndicator ?? Object.values(lists).flat().includes(quote.ticker);
+  }, [lists, isInListIndicator]);
 
   const onAddAction = () => {
-    if (!isInList) {
-      dispatch(putTickerToList({ name: reservedListKey, value: quote.ticker }));
+    if (!isInList || listKey) {
+      dispatch(putTickerToList({ name: listKey ?? reservedListKey, value: quote.ticker }));
     }
   };
 
