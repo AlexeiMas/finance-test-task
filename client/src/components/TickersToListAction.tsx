@@ -14,6 +14,7 @@ import { Plus } from 'lucide-react';
 import { useGetTickersQuery } from '@/features/tickers/tickersApi';
 import TickersTable from '@/components/TickersTable/TickersTable';
 import { useMemo } from 'react';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 
 interface ITickersToListActionProps {
   tickersList: string[];
@@ -24,7 +25,7 @@ const TickersToListAction = ({ tickersList, listKey }: ITickersToListActionProps
   const { data, isLoading } = useGetTickersQuery();
 
   const filteredList = useMemo(() => {
-    return data?.filter((quote) => !tickersList.includes(quote.ticker)) ?? [];
+    return data?.filter((quote) => !tickersList?.includes(quote.ticker)) ?? [];
   }, [tickersList, data]);
 
   return (
@@ -33,7 +34,10 @@ const TickersToListAction = ({ tickersList, listKey }: ITickersToListActionProps
         <Button
           variant={'ghost'}
           className={cn(
-            buttonVariants({ variant: 'ghost', class: 'text-sky-600 mt-4 w-fit mx-auto' })
+            buttonVariants({
+              variant: 'ghost',
+              class: 'text-sky-600 dark:text-sky-400 mt-4 w-fit mx-auto',
+            })
           )}
         >
           <Plus className='w-5 h-5 mr-1' />
@@ -48,7 +52,7 @@ const TickersToListAction = ({ tickersList, listKey }: ITickersToListActionProps
           </DialogDescription>
         </DialogHeader>
 
-        <div className='w-full'>
+        <ScrollArea className='w-full'>
           {isLoading && 'Loading...'}
           {filteredList.length ? (
             <TickersTable
@@ -60,7 +64,8 @@ const TickersToListAction = ({ tickersList, listKey }: ITickersToListActionProps
           ) : (
             <p className='text-center text-green-800'>All tickers are already added to list</p>
           )}
-        </div>
+          <ScrollBar orientation='horizontal' />
+        </ScrollArea>
 
         <DialogFooter className='sm:justify-center'>
           <DialogClose asChild>

@@ -9,7 +9,11 @@ import { HTMLAttributes } from 'react';
 
 interface ITickersTableProps extends HTMLAttributes<HTMLTableRowElement> {
   data: IQuote[];
-  excludedColumns?: (keyof Pick<IQuote, 'price' | 'change' | 'change_percent'> | 'actionBtn')[];
+  excludedColumns?: (
+    | keyof Pick<IQuote, 'price' | 'change' | 'change_percent'>
+    | 'actionBtn'
+    | 'title'
+  )[];
   isInListIndicator?: boolean;
   listKey?: string;
 }
@@ -32,7 +36,9 @@ const TickersTable = ({
                 {quote.ticker}
               </Badge>
             </TableCell>
-            <TableCell>{tickerTitlesMap.get(quote.ticker)}</TableCell>
+            {!excludedColumns?.includes('title') && (
+              <TableCell>{tickerTitlesMap.get(quote.ticker)}</TableCell>
+            )}
             {!excludedColumns?.includes('price') && (
               <TableCell className='last:text-right'>
                 {convertToCurrencyFormat(quote.price)}

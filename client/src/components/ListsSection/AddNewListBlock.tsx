@@ -18,7 +18,9 @@ const AddNewListBlock = () => {
       <DialogTrigger asChild>
         <Button
           variant={'ghost'}
-          className={cn(buttonVariants({ variant: 'ghost', class: 'text-sky-600' }))}
+          className={cn(
+            buttonVariants({ variant: 'ghost', class: 'text-sky-600 dark:text-sky-400' })
+          )}
         >
           <Plus className='w-5 h-5 mr-1' />
           Create new list
