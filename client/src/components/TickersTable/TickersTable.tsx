@@ -1,11 +1,11 @@
 import { Table, TableBody, TableCaption, TableCell, TableRow } from '@/components/ui/table';
 import { IQuote } from '@/types/dataTypes';
-import { ArrowDown, ArrowUp } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { cn, convertToCurrencyFormat } from '@/lib/utils';
+import { convertToCurrencyFormat } from '@/lib/utils';
 import TickerActionBlock from '@/components/TickersTable/TickerActionBlock';
 import { tickerTitlesMap } from '@/constants';
 import { HTMLAttributes } from 'react';
+import PercentChangeBadge from '@/components/TickersTable/PercentChangeBadge';
 
 interface ITickersTableProps extends HTMLAttributes<HTMLTableRowElement> {
   data: IQuote[];
@@ -26,7 +26,7 @@ const TickersTable = ({
   ...rowsProps
 }: ITickersTableProps) => {
   return (
-    <Table>
+    <Table className='mb-4'>
       <TableCaption>A list of available quotes.</TableCaption>
       <TableBody>
         {data.map((quote) => (
@@ -51,21 +51,7 @@ const TickersTable = ({
             )}
             {!excludedColumns?.includes('change_percent') && (
               <TableCell className='last:text-right'>
-                <Badge
-                  className={cn(
-                    'rounded space-x-0.5 pointer-events-none',
-                    Math.sign(+quote.change_percent)
-                      ? 'bg-badge-bg-success text-badge-text-success'
-                      : 'bg-badge-bg-danger text-badge-text-danger'
-                  )}
-                >
-                  {Math.sign(+quote.change_percent) ? (
-                    <ArrowUp className='w-4 h-4' />
-                  ) : (
-                    <ArrowDown className='w-4 h-4' />
-                  )}
-                  <span className='text-base font-medium'>{quote.change_percent}&nbsp;%</span>
-                </Badge>
+                <PercentChangeBadge changePercent={quote.change_percent} />
               </TableCell>
             )}
             {!excludedColumns?.includes('actionBtn') && (

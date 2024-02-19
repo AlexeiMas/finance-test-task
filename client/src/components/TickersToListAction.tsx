@@ -57,7 +57,7 @@ const TickersToListAction = ({ tickersList, listKey }: ITickersToListActionProps
           {filteredList.length ? (
             <TickersTable
               data={filteredList}
-              excludedColumns={['price', 'change']}
+              excludedColumns={['change']}
               isInListIndicator={false}
               listKey={listKey}
             />
