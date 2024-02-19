@@ -1,12 +1,12 @@
 import TickersTable from '@/components/TickersTable/TickersTable';
 import ListsSection from '@/components/ListsSection/ListsSection';
-import { useGetTickersQuery } from '@/features/tickers/tickersApi';
 import SettingsDrawer from '@/components/SettingslDrawer/SettingsDrawer';
+import { useGetTickersQueryEnhanced } from '@/hooks/useGetTickersQueryEnhanced';
 
 const HomePage = () => {
-  const { data, isLoading } = useGetTickersQuery();
+  const { currentListExpanded, isLoading } = useGetTickersQueryEnhanced(null);
 
-  if (isLoading || !data) {
+  if (isLoading || !currentListExpanded) {
     return <div>Loading...</div>;
   }
 
@@ -16,7 +16,7 @@ const HomePage = () => {
         <div className='flex justify-end my-6'>
           <SettingsDrawer />
         </div>
-        <TickersTable data={data} />
+        <TickersTable data={currentListExpanded} />
       </div>
       <ListsSection />
     </>

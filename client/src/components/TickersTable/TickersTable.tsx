@@ -1,5 +1,5 @@
 import { Table, TableBody, TableCaption, TableCell, TableRow } from '@/components/ui/table';
-import { IQuote } from '@/types/dataTypes';
+import { IQuote, IQuoteWithSign } from '@/types/dataTypes';
 import { Badge } from '@/components/ui/badge';
 import { convertToCurrencyFormat } from '@/lib/utils';
 import TickerActionBlock from '@/components/TickersTable/TickerActionBlock';
@@ -8,7 +8,7 @@ import { HTMLAttributes } from 'react';
 import PercentChangeBadge from '@/components/TickersTable/PercentChangeBadge';
 
 interface ITickersTableProps extends HTMLAttributes<HTMLTableRowElement> {
-  data: IQuote[];
+  data: IQuoteWithSign[];
   excludedColumns?: (
     | keyof Pick<IQuote, 'price' | 'change' | 'change_percent'>
     | 'actionBtn'
@@ -51,7 +51,7 @@ const TickersTable = ({
             )}
             {!excludedColumns?.includes('change_percent') && (
               <TableCell className='last:text-right'>
-                <PercentChangeBadge changePercent={quote.change_percent} />
+                <PercentChangeBadge changePercent={quote.change_percent} sign={quote.signChange} />
               </TableCell>
             )}
             {!excludedColumns?.includes('actionBtn') && (

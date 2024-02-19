@@ -9,6 +9,10 @@ export interface IQuote {
   last_trade_time: Date;
 }
 
+export interface IQuoteWithSign extends IQuote {
+  signChange: number;
+}
+
 export interface ITickerItemForCheckbox {
   id: string;
   label: string;

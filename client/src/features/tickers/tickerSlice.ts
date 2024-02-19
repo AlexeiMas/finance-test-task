@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { tickersApi } from '@/features/tickers/tickersApi';
 import { getAllTickersList } from '@/api/webSocket';
 import { IQuote } from '@/types/dataTypes';
@@ -11,17 +11,26 @@ export const getAllTickers = createAsyncThunk('quotes/getList', async () => {
 export interface ITickerState {
   explicitTickers: IQuote[];
   tickersList: string[];
+  currentList: IQuote[];
+  previousList: IQuote[];
 }
 
 const initialState: ITickerState = {
   explicitTickers: [],
   tickersList: [],
+  currentList: [],
+  previousList: [],
 };
 
 export const tickerSlice = createSlice({
   name: 'quotes',
   initialState,
-  reducers: {},
+  reducers: {
+    updateLists: (state, action: PayloadAction<IQuote[]>) => {
+      state.previousList = state.currentList;
+      state.currentList = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(getAllTickers.fulfilled, (state, action) => {
       state.tickersList = action.payload;
@@ -32,7 +41,10 @@ export const tickerSlice = createSlice({
   },
   selectors: {
     fetchTickersList: (data: ITickerState) => data.tickersList,
+    getPreviousDataList: (data: ITickerState) => ({ previousList: data.previousList }),
   },
 });
 
-export const { fetchTickersList } = tickerSlice.selectors;
+export const { fetchTickersList, getPreviousDataList } = tickerSlice.selectors;
+
+export const { updateLists } = tickerSlice.actions;

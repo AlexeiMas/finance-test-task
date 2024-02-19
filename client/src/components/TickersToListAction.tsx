@@ -11,10 +11,9 @@ import {
 import { Button, buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Plus } from 'lucide-react';
-import { useGetTickersQuery } from '@/features/tickers/tickersApi';
 import TickersTable from '@/components/TickersTable/TickersTable';
-import { useMemo } from 'react';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { useGetTickersQueryEnhanced } from '@/hooks/useGetTickersQueryEnhanced';
 
 interface ITickersToListActionProps {
   tickersList: string[];
@@ -22,11 +21,10 @@ interface ITickersToListActionProps {
 }
 
 const TickersToListAction = ({ tickersList, listKey }: ITickersToListActionProps) => {
-  const { data, isLoading } = useGetTickersQuery();
-
-  const filteredList = useMemo(() => {
-    return data?.filter((quote) => !tickersList?.includes(quote.ticker)) ?? [];
-  }, [tickersList, data]);
+  const { currentListExpanded, isLoading } = useGetTickersQueryEnhanced(
+    tickersList,
+    (quote) => !tickersList?.includes(quote.ticker)
+  );
 
   return (
     <Dialog>
@@ -54,9 +52,9 @@ const TickersToListAction = ({ tickersList, listKey }: ITickersToListActionProps
 
         <ScrollArea className='w-full'>
           {isLoading && 'Loading...'}
-          {filteredList.length ? (
+          {currentListExpanded.length ? (
             <TickersTable
-              data={filteredList}
+              data={currentListExpanded}
               excludedColumns={['change']}
               isInListIndicator={false}
               listKey={listKey}

@@ -13,10 +13,9 @@ import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
 import { filterTickersInList } from '@/features/lists/listsSlice';
 import { useDispatch } from 'react-redux';
-import { useGetTickersQuery } from '@/features/tickers/tickersApi';
-import { useMemo } from 'react';
 import { convertToCurrencyFormat } from '@/lib/utils';
 import PercentChangeBadge from '@/components/TickersTable/PercentChangeBadge';
+import { useGetTickersQueryEnhanced } from '@/hooks/useGetTickersQueryEnhanced';
 
 interface ITickersTableMinimizedProps {
   quotes: string[];
@@ -24,17 +23,10 @@ interface ITickersTableMinimizedProps {
 }
 
 const TickersTableMinimized = ({ quotes, decodedName }: ITickersTableMinimizedProps) => {
-  const { data } = useGetTickersQuery(undefined, {
-    skip: !quotes,
-  });
+  const { currentListExpanded } = useGetTickersQueryEnhanced(quotes, (quote) =>
+    quotes?.includes(quote.ticker)
+  );
   const dispatch = useDispatch();
-
-  const filteredData = useMemo(() => {
-    if (data) {
-      return data.filter((quote) => quotes.includes(quote.ticker));
-    }
-    return [];
-  }, [quotes, data]);
 
   const onCloseHandler = (value: string) => {
     dispatch(filterTickersInList({ name: decodedName, value }));
@@ -53,12 +45,12 @@ const TickersTableMinimized = ({ quotes, decodedName }: ITickersTableMinimizedPr
         </TableRow>
       </TableHeader>
       <TableBody>
-        {!quotes.length && (
+        {!currentListExpanded.length && (
           <TableRow className='p-6 text-md text-center pointer-events-none'>
-            <TableCell colSpan={3}>Empty list</TableCell>
+            <TableCell colSpan={5}>Empty list</TableCell>
           </TableRow>
         )}
-        {filteredData.map((quote) => (
+        {currentListExpanded.map((quote) => (
           <TableRow key={quote.ticker}>
             <TableCell className='font-medium'>
               <Badge className='rounded-md w-20 justify-center'>{quote.ticker}</Badge>
@@ -68,7 +60,7 @@ const TickersTableMinimized = ({ quotes, decodedName }: ITickersTableMinimizedPr
               {convertToCurrencyFormat(quote.price)}
             </TableCell>
             <TableCell>
-              <PercentChangeBadge changePercent={quote.change_percent} />
+              <PercentChangeBadge changePercent={quote.change_percent} sign={quote.signChange} />
             </TableCell>
             <TableCell className='text-right'>
               <Button variant='outline' size='icon' onClick={() => onCloseHandler(quote.ticker)}>
